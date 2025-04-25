@@ -234,8 +234,7 @@ if (!$conn) {
                                             </td>
                                             <td><?php echo date('M d, Y', strtotime($complaint['created_at'])); ?></td>
                                             <td>
-                                                <a href="view_complaint.php?id=<?php echo $complaint['id']; ?>" 
-                                                   class="btn btn-sm btn-info" title="View Details">
+                                            <a href="view_complaints.php?id=<?php echo $complaint['id']; ?>" class="btn btn-sm btn-info" title="View Details">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
                                                 <a href="update_status.php?id=<?php echo $complaint['id']; ?>" 

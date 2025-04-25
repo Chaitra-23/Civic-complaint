@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <span>or sign up with</span>
                                     </div>
                                     
-                                    <div class="social-login">
+                                    <!--div class="social-login">
                                         <a href="#" class="social-btn google">
                                             <i class="fab fa-google"></i>
                                         </a>
@@ -219,7 +219,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <a href="#" class="social-btn twitter">
                                             <i class="fab fa-twitter"></i>
                                         </a>
-                                    </div>
+                                    </div-->
                                 </div>
                                 <div class="card-footer text-center">
                                     <p class="mb-0">Already have an account? <a href="login.php" class="auth-link">Login here</a></p>
