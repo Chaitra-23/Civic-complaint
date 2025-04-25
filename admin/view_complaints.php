@@ -72,7 +72,7 @@ while ($row = $result->fetch_assoc()) {
             <div class="card shadow mb-4">
                 <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
                     <h4 class="mb-0"><i class="fas fa-clipboard-check me-2"></i>Complaint Details</h4>
-                    <a href="my_complaints.php" class="btn btn-light btn-sm">
+                    <a href="dashboard.php" class="btn btn-light btn-sm">
                         <i class="fas fa-arrow-left me-2"></i>Back to List
                     </a>
                 </div>
