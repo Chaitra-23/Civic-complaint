@@ -1,6 +1,26 @@
 <?php
 require_once 'includes/header.php';
 
+// Check if complaint_images table exists and create it if it doesn't
+$result = $conn->query("SHOW TABLES LIKE 'complaint_images'");
+if ($result->num_rows == 0) {
+    $sql = "CREATE TABLE IF NOT EXISTS complaint_images (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        complaint_id INT NOT NULL,
+        image_path VARCHAR(255) NOT NULL,
+        uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+}
+
+// Check if priority column exists in complaints table and add it if it doesn't
+$result = $conn->query("SHOW COLUMNS FROM complaints LIKE 'priority'");
+if ($result->num_rows == 0) {
+    $sql = "ALTER TABLE complaints ADD COLUMN priority ENUM('low', 'medium', 'high') DEFAULT 'medium' AFTER location";
+    $conn->query($sql);
+}
+
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
@@ -22,14 +42,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($location)) $errors[] = "Location is required";
     
     if (empty($errors)) {
-        // Insert complaint
+        // Try a direct query instead of prepared statement
         $sql = "INSERT INTO complaints (user_id, department_id, title, description, location, priority) 
-                VALUES (?, ?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iissss", $_SESSION['user_id'], $department_id, $title, $description, $location, $priority);
+                VALUES ('" . $conn->real_escape_string($_SESSION['user_id']) . "', 
+                        '" . $conn->real_escape_string($department_id) . "', 
+                        '" . $conn->real_escape_string($title) . "', 
+                        '" . $conn->real_escape_string($description) . "', 
+                        '" . $conn->real_escape_string($location) . "', 
+                        '" . $conn->real_escape_string($priority) . "')";
         
-        if ($stmt->execute()) {
-            $complaint_id = $stmt->insert_id;
+        if ($conn->query($sql)) {
+            $complaint_id = $conn->insert_id;
             
             // Handle image upload
             if (!empty($_FILES['images']['name'][0])) {
@@ -45,10 +68,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $target_path = $upload_dir . $new_file_name;
                     
                     if (move_uploaded_file($tmp_name, $target_path)) {
-                        $sql = "INSERT INTO complaint_images (complaint_id, image_path) VALUES (?, ?)";
-                        $stmt = $conn->prepare($sql);
-                        $stmt->bind_param("is", $complaint_id, $target_path);
-                        $stmt->execute();
+                        $img_sql = "INSERT INTO complaint_images (complaint_id, image_path) 
+                                   VALUES ('" . $conn->real_escape_string($complaint_id) . "', 
+                                           '" . $conn->real_escape_string($target_path) . "')";
+                        $conn->query($img_sql);
                     }
                 }
             }
@@ -58,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             header('Location: my_complaints.php');
             exit();
         } else {
-            $errors[] = "Error submitting complaint. Please try again.";
+            $errors[] = "Error submitting complaint: " . $conn->error . " (SQL: $sql)";
         }
     }
 }

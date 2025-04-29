@@ -30,22 +30,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         if ($result->num_rows === 1) {
             $user = $result->fetch_assoc();
+            // Debug information for password verification
+            if (isset($password) && isset($user['password'])) {
+                error_log('Login attempt - Username: ' . $username);
+                error_log('Provided password: ' . $password);
+                error_log('Stored hash: ' . $user['password']);
+                error_log('password_verify result: ' . (password_verify($password, $user['password']) ? 'true' : 'false'));
+            }
             
             // Verify password
             if (password_verify($password, $user['password'])) {
+                // Clear any existing session data
+                session_unset();
+                
                 // Set session variables
                 $_SESSION['user_id'] = $user['id'];
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['email'] = $user['email'];
                 $_SESSION['role'] = $user['role'];
                 
-                // Redirect based on role
-                if ($user['role'] === 'admin') {
-                    header("Location: admin/dashboard.php");
+                // Debug information
+                error_log("User logged in - ID: " . $user['id'] . ", Username: " . $user['username'] . ", Role: " . $user['role']);
+                error_log("Session data: " . print_r($_SESSION, true));
+                
+                // Force session write
+                session_write_close();
+                
+                // Redirect based on role - check for any variation of 'admin'
+                $role = strtolower($user['role']);
+                if ($role === 'admin' || $role === 'administrator') {
+                    echo "<script>window.location.href = 'admin/dashboard.php';</script>";
+                    exit();
                 } else {
-                    header("Location: index.php");
+                    echo "<script>window.location.href = 'index.php';</script>";
+                    exit();
                 }
-                exit();
             } else {
                 $errors[] = "Invalid password";
             }
@@ -161,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     </div>
                                 </div>
                                 <div class="card-footer text-center">
-                                    <p class="mb-0">Don't have an account? <a href="register.php" class="auth-link">Register here</a></p>
+                                    <p class="mb-0">Don't have an account? <a href="register_new.php" class="auth-link">Register here</a></p>
                                 </div>
                             </div>
                         </div>

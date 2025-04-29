@@ -1,17 +1,10 @@
 <?php
-// Direct database connection test
-define('DB_SERVER', 'localhost:8889');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', 'root'); // Default MAMP password
-define('DB_NAME', 'civic_complaints');
+// Include the main database configuration file
+require_once 'config/database.php';
 
-// Create connection
-$conn = new mysqli(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+// Test connection
+if ($conn) {
 
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
 echo "Connected successfully to database<br>";
 
 // Test queries
@@ -59,4 +52,5 @@ if ($result) {
 
 // Close connection
 $conn->close();
+}
 ?>

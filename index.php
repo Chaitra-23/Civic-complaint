@@ -86,7 +86,7 @@ try {
         <p class="lead">Report and track civic issues in your community for proactive maintenance</p>
         <?php if (!isset($_SESSION['user_id'])): ?>
             <div class="mt-4">
-                <a href="register.php" class="btn btn-light btn-lg me-2">Register</a>
+                <a href="register_new.php" class="btn btn-light btn-lg me-2">Register</a>
                 <a href="login.php" class="btn btn-outline-light btn-lg">Login</a>
             </div>
         <?php else: ?>
@@ -216,7 +216,7 @@ try {
         <h2>Ready to report an issue?</h2>
         <p class="lead mb-4">Help improve your community by reporting civic issues</p>
         <?php if (!isset($_SESSION['user_id'])): ?>
-            <a href="register.php" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="register_new.php" class="btn btn-primary btn-lg">Get Started</a>
         <?php else: ?>
             <a href="submit_complaint.php" class="btn btn-primary btn-lg">Submit a Complaint</a>
         <?php endif; ?>

@@ -1,11 +1,19 @@
 <?php
-define('DB_SERVER', 'localhost:8889');
-define('DB_USERNAME', 'root');
-define('DB_PASSWORD', 'root'); // Default MAMP password
+/**
+ * Fixed Database Configuration File
+ * 
+ * This file contains the optimized database connection settings for XAMPP
+ */
+
+// Database credentials
+define('DB_SERVER', '127.0.0.1');  // Using IP instead of 'localhost' to force TCP connection (needed for custom port)
+define('DB_PORT', 3307);           // Your MySQL is running on port 3307
+define('DB_USERNAME', 'root');     // Default XAMPP username
+define('DB_PASSWORD', '');         // Default XAMPP has no password
 define('DB_NAME', 'civic_complaints');
 
 // Attempt to connect to MySQL database
-$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME);
+$conn = mysqli_connect(DB_SERVER, DB_USERNAME, DB_PASSWORD, DB_NAME, DB_PORT);
 
 // Check connection
 if($conn === false){

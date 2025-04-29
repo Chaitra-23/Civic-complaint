@@ -54,6 +54,15 @@ A web-based system for citizens to submit and track civic complaints for proacti
      - Admin: Username: `admin`, Password: `admin123`
      - User: Username: `user`, Password: `user123`
 
+4. **Configure phpMyAdmin**:
+   - Locate `config.inc.php` in your phpMyAdmin installation
+   - Within `$cfg['Servers'][$i]`, add or update:
+     ```php
+     $cfg['Servers'][$i]['host'] = '127.0.0.1';
+     $cfg['Servers'][$i]['port'] = '3307';
+     ```
+   - Save and reload phpMyAdmin to connect on port 3307
+
 ## Usage
 
 1. **User Functions**:

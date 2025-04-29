@@ -50,6 +50,22 @@ while ($row = $result->fetch_assoc()) {
     $images[] = $row;
 }
 
+// Check if complaint_updates table exists and create it if it doesn't
+$result = $conn->query("SHOW TABLES LIKE 'complaint_updates'");
+if ($result->num_rows == 0) {
+    $sql = "CREATE TABLE IF NOT EXISTS complaint_updates (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        complaint_id INT NOT NULL,
+        status VARCHAR(20) NOT NULL,
+        description TEXT NOT NULL,
+        created_by INT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE CASCADE,
+        FOREIGN KEY (created_by) REFERENCES users(id)
+    )";
+    $conn->query($sql);
+}
+
 // Get complaint updates
 $updates = [];
 $sql = "SELECT cu.*, u.username 
@@ -58,11 +74,17 @@ $sql = "SELECT cu.*, u.username
         WHERE cu.complaint_id = ? 
         ORDER BY cu.created_at DESC";
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $complaint_id);
-$stmt->execute();
-$result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $updates[] = $row;
+if ($stmt) {
+    $stmt->bind_param("i", $complaint_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $updates[] = $row;
+    }
+} else {
+    // Handle the case where prepare() failed
+    $updates = [];
+    error_log("Error preparing statement: " . $conn->error);
 }
 ?>
 

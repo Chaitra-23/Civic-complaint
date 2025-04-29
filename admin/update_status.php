@@ -1,6 +1,23 @@
 <?php
 require_once '../includes/header.php';
 
+// Check if notifications table exists and create it if it doesn't
+$result = $conn->query("SHOW TABLES LIKE 'notifications'");
+if ($result->num_rows == 0) {
+    $sql = "CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT NOT NULL,
+        complaint_id INT NOT NULL,
+        message TEXT NOT NULL,
+        type VARCHAR(20) NOT NULL DEFAULT 'email',
+        status VARCHAR(20) NOT NULL DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY (complaint_id) REFERENCES complaints(id) ON DELETE CASCADE
+    )";
+    $conn->query($sql);
+}
+
 // Check if user is admin
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     header('Location: ../login.php');
@@ -20,7 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate input
     $errors = [];
     if (empty($status)) $errors[] = "Status is required";
-    if (empty($description)) $errors[] = "Description is required";
+    // Description is now optional as per the updated schema
+    
+    // Ensure status is not too long for the database field
+    if (strlen($status) > 50) {
+        $errors[] = "Status is too long (maximum 50 characters)";
+    }
     
     if (empty($errors)) {
         // Start transaction
@@ -30,20 +52,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             // Update complaint status
             $sql = "UPDATE complaints SET status = ? WHERE id = ?";
             $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Error preparing statement: " . $conn->error);
+            }
             $stmt->bind_param("si", $status, $complaint_id);
-            $stmt->execute();
+            if (!$stmt->execute()) {
+                throw new Exception("Error executing statement: " . $stmt->error);
+            }
             
             // Add status update record
+            // Ensure status is truncated to match the database field length (varchar(50))
+            $status_truncated = substr($status, 0, 50);
+            
+            // Description can be NULL as per the updated schema
+            if (empty($description)) {
+                $description = "Status updated to " . $status_truncated;
+            }
+            
             $sql = "INSERT INTO complaint_updates (complaint_id, status, description, created_by) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param("issi", $complaint_id, $status, $description, $_SESSION['user_id']);
-            $stmt->execute();
+            if (!$stmt) {
+                throw new Exception("Error preparing statement: " . $conn->error);
+            }
+            $stmt->bind_param("issi", $complaint_id, $status_truncated, $description, $_SESSION['user_id']);
+            if (!$stmt->execute()) {
+                throw new Exception("Error executing statement: " . $stmt->error);
+            }
             
             // Get user ID for notification
             $sql = "SELECT user_id FROM complaints WHERE id = ?";
             $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Error preparing statement: " . $conn->error);
+            }
             $stmt->bind_param("i", $complaint_id);
-            $stmt->execute();
+            if (!$stmt->execute()) {
+                throw new Exception("Error executing statement: " . $stmt->error);
+            }
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
             $user_id = $row['user_id'];
@@ -52,8 +97,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $message = "Your complaint status has been updated to: " . ucfirst(str_replace('_', ' ', $status));
             $sql = "INSERT INTO notifications (user_id, complaint_id, message, type) VALUES (?, ?, ?, 'email')";
             $stmt = $conn->prepare($sql);
+            if (!$stmt) {
+                throw new Exception("Error preparing statement: " . $conn->error);
+            }
             $stmt->bind_param("iis", $user_id, $complaint_id, $message);
-            $stmt->execute();
+            if (!$stmt->execute()) {
+                throw new Exception("Error executing statement: " . $stmt->error);
+            }
             
             // Commit transaction
             $conn->commit();
@@ -174,12 +224,13 @@ if ($complaint_id > 0) {
                                 <option value="resolved" <?php echo $complaint['status'] === 'resolved' ? 'selected' : ''; ?>>Resolved</option>
                                 <option value="rejected" <?php echo $complaint['status'] === 'rejected' ? 'selected' : ''; ?>>Rejected</option>
                             </select>
+                            <small class="text-muted">Note: Status values are limited to 50 characters in the database.</small>
                         </div>
                         
                         <div class="mb-3">
                             <label for="description" class="form-label">Update Description</label>
-                            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
-                            <small class="text-muted">Provide details about this status update. This will be visible to the user.</small>
+                            <textarea class="form-control" id="description" name="description" rows="4"></textarea>
+                            <small class="text-muted">Provide details about this status update. This will be visible to the user. Optional.</small>
                         </div>
                         
                         <div class="d-grid">

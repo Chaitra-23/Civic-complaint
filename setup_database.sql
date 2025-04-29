@@ -1,6 +1,6 @@
 -- Create the database
-CREATE DATABASE IF NOT EXISTS complaints_db;
-USE complaints_db;
+CREATE DATABASE IF NOT EXISTS civic_complaints;
+USE civic_complaints;
 
 -- Create users table
 CREATE TABLE IF NOT EXISTS users (

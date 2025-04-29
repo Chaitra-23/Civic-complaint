@@ -1,9 +1,23 @@
 <?php
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Debug path resolution
+$header_path = realpath('../includes/header.php');
+error_log("Header file path: " . ($header_path ? $header_path : 'File not found'));
+
 require_once '../includes/header.php';
 
 // Check if user is admin
-if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
-    header('Location: ../login.php');
+error_log("Dashboard session check - User ID: " . (isset($_SESSION['user_id']) ? $_SESSION['user_id'] : 'not set') . 
+          ", Role: " . (isset($_SESSION['role']) ? $_SESSION['role'] : 'not set'));
+error_log("Full session data: " . print_r($_SESSION, true));
+
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['role']) !== 'admin') {
+    error_log("Access denied to admin dashboard - redirecting to login");
+    echo "<script>alert('You must be logged in as an admin to access this page.'); window.location.href = '../login.php';</script>";
     exit();
 }
 
