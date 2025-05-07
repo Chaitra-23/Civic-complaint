@@ -1,0 +1,11 @@
+# Prevent direct access to PHP files in this directory
+<Files "*.php">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+# Allow access to specific files if needed
+# <Files "allowed-file.php">
+#    Order Allow,Deny
+#    Allow from all
+# </Files>

@@ -157,8 +157,13 @@ function initCounterAnimation() {
         const speed = 200;
         
         counters.forEach(counter => {
+            // Store the original value
+            const finalValue = parseInt(counter.innerText);
+            // Reset to zero for animation
+            counter.innerText = '0';
+            
             const animate = () => {
-                const value = +counter.getAttribute('data-count');
+                const value = finalValue;
                 const data = +counter.innerText;
                 
                 const time = value / speed;

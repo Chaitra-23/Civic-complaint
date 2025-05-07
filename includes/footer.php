@@ -1,3 +1,11 @@
+<?php
+// Prevent direct access to this file
+if (!defined('CIVIC_SYSTEM') || CIVIC_SYSTEM !== true) {
+    // Redirect to the homepage if someone tries to access this file directly
+    header("Location: ../index.php");
+    exit;
+}
+?>
     </div> <!-- Close container div -->
     <footer class="bg-dark text-white mt-5 py-4">
         <div class="container">

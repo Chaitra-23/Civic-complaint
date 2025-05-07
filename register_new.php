@@ -114,7 +114,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="row g-0">
                             <div class="col-md-6 d-none d-md-block">
                                 <div class="auth-illustration p-4">
-                                    <img src="assets/images/register-illustration.svg" alt="Register" onerror="this.src='https://cdn.pixabay.com/photo/2017/07/31/11/44/laptop-2557576_1280.jpg'; this.style.opacity='0.7';">
+                                    <img src="istockphoto-986900214-612x612.jpg" alt="Register" onerror="this.src='https://cdn.pixabay.com/photo/2017/07/31/11/44/laptop-2557576_1280.jpg'; this.style.opacity='0.7';">
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -188,13 +188,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                                 <select class="form-select" id="role" name="role">
                                                     <option value="citizen" <?php echo (isset($_POST['role']) && $_POST['role'] === 'citizen') ? 'selected' : ''; ?>>Citizen</option>
                                                     <option value="staff" <?php echo (isset($_POST['role']) && $_POST['role'] === 'staff') ? 'selected' : ''; ?>>Staff</option>
-                                                    <option value="admin" <?php echo (isset($_POST['role']) && $_POST['role'] === 'admin') ? 'selected' : ''; ?>>Administrator</option>
+                                                    <!--option value="admin" <?php echo (isset($_POST['role']) && $_POST['role'] === 'admin') ? 'selected' : ''; ?>>Administrator</option-->
                                                 </select>
                                             </div>
                                         </div>
                                         <div class="mb-3 form-check">
                                             <input type="checkbox" class="form-check-input" id="terms" required>
-                                            <label class="form-check-label" for="terms">I agree to the <a href="#" class="auth-link">Terms of Service</a> and <a href="#" class="auth-link">Privacy Policy</a></label>
+                                            <label class="form-check-label" for="terms">I agree to the <a href="terms_of_service.php" class="auth-link" target="_blank">Terms of Service</a> and <a href="privacy_policy.php" class="auth-link" target="_blank">Privacy Policy</a></label>
                                         </div>
                                         <div class="d-grid gap-2">
                                             <button type="submit" class="btn btn-primary auth-btn">

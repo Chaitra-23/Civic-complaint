@@ -4,6 +4,9 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// Define system constant to allow includes
+define('CIVIC_SYSTEM', true);
+
 // Debug path resolution
 $header_path = realpath('../includes/header.php');
 error_log("Header file path: " . ($header_path ? $header_path : 'File not found'));

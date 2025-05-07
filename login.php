@@ -101,7 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <div class="row g-0">
                             <div class="col-md-6 d-none d-md-block">
                                 <div class="auth-illustration p-4">
-                                    <img src="assets/images/login-illustration.svg" alt="Login" onerror="this.src='https://cdn.pixabay.com/photo/2017/07/31/11/44/laptop-2557576_1280.jpg'; this.style.opacity='0.7';">
+                                    <img src="istockphoto-986900214-612x612.jpg" alt="Login" onerror="this.src='https://cdn.pixabay.com/photo/2017/07/31/11/44/laptop-2557576_1280.jpg'; this.style.opacity='0.7';">
+                                    
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -142,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <div class="mb-4">
                                             <div class="d-flex justify-content-between">
                                                 <label for="password" class="form-label">Password</label>
-                                                <a href="#" class="auth-link small">Forgot Password?</a>
+                                                <!--a href="#" class="auth-link small">Forgot Password?</a-->
                                             </div>
                                             <div class="input-group password-field-wrapper">
                                                 <span class="input-group-text"><i class="fas fa-lock"></i></span>
@@ -163,7 +164,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         </div>
                                     </form>
                                     
-                                    <div class="auth-divider">
+                                    <!--div class="auth-divider">
                                         <span>or sign in with</span>
                                     </div>
                                     
@@ -178,7 +179,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                             <i class="fab fa-twitter"></i>
                                         </a>
                                     </div>
-                                </div>
+                                </div-->
                                 <div class="card-footer text-center">
                                     <p class="mb-0">Don't have an account? <a href="register_new.php" class="auth-link">Register here</a></p>
                                 </div>

@@ -1,19 +1,42 @@
 <?php
+// Prevent direct access to this file
+defined('CIVIC_SYSTEM') or define('CIVIC_SYSTEM', true);
+if (!defined('CIVIC_SYSTEM') || CIVIC_SYSTEM !== true) {
+    // Redirect to the homepage if someone tries to access this file directly
+    header("Location: ../index.php");
+    exit;
+}
+
 // Start session if not already started
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-// Debug session data
-error_log("Header.php - Session data: " . print_r($_SESSION, true));
+// Determine if we're in the admin section
+$isAdmin = strpos($_SERVER['PHP_SELF'], '/admin/') !== false;
+$basePath = $isAdmin ? '../' : '';
 
+// Debug path information
+error_log("Current path: " . $_SERVER['PHP_SELF'] . ", isAdmin: " . ($isAdmin ? 'true' : 'false') . ", basePath: " . $basePath);
+
+// Include database connection
 require_once __DIR__ . '/../config/database.php';
+
+// Check database connection
+if (!$conn) {
+    error_log("Database connection failed in header.php: " . mysqli_connect_error());
+} else {
+    error_log("Database connection successful in header.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>Civic Complaints System</title>
     <meta name="description" content="A comprehensive system for citizens to submit and track civic complaints for proactive maintenance">
     <meta name="theme-color" content="#0d6efd">
@@ -22,11 +45,6 @@ require_once __DIR__ . '/../config/database.php';
     <!-- CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.0.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <?php
-    // Determine if we're in the admin section
-    $isAdmin = strpos($_SERVER['PHP_SELF'], '/admin/') !== false;
-    $basePath = $isAdmin ? '../' : '';
-    ?>
     <link rel="stylesheet" href="<?php echo $basePath; ?>assets/css/styles.css">
     <link rel="stylesheet" href="<?php echo $basePath; ?>assets/css/mobile.css">
     <link rel="stylesheet" href="<?php echo $basePath; ?>assets/css/dark-mode.css">
